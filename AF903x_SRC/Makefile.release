@@ -1,0 +1,102 @@
+module= dvb-usb-af903x
+EXTRA_CFLAGS = -DEXPORT_SYMTAB
+CURRENT = $(shell uname -r)
+KDIR = /lib/modules/$(CURRENT)/build
+PWD = $(shell pwd)
+KDIR26	 := /lib/modules/$(CURRENT)/kernel/drivers/media/dvb/dvb-usb
+DEST = /lib/modules/$(CURRENT)/kernel/$(MDIR)
+
+dvb-usb-af903x-objs := \
+		af903x-core.o af903x-devices.o af903x-drv.o af903x-fe.o af903x-tuner.o iocontrol.o\
+		cmd.o standard.o demodulator.o demodulatorextend.o \
+		usb2impl.o user.o \
+		Afa_AF9007.o TDA18291.o Fitipower_FC0011.o\
+		Philips_TDA18291HN.o Microtune_MT2266.o mt2266.o \
+		mt2266_userdef.o Infineon_TUA9001.o driver_tua9001.o \
+		Afa_PEACOCK.o Infineon_TUA8010.o driver_tua8010.o\
+		e4000.o Elonics_E4000.o fc2580.o FCI_FC2580.o\
+		Fitipower_FC0012.o Freescale_MC44CD02.o Infineon_TUA6039.o\
+		ITD30x0.o Integrant_ITD3020.o Maxlinear_MXL5005.o MXL5005.o\
+		MXL5005_Initialize.o Microtune_MT2260B0.o mt2260.o\
+		mt2260_userdef.o Panasonic_ENV77H11D5.o Peacock.o\
+		Philips_FQD1218ME_MK5.o Philips_TD1316AFIHP.o xc3028_control.o\
+		Xceive_XC3028L.o i2c_driver.o xc4000_control.o Xceive_XC4000.o\
+		Philips_TDA18271.o TDA18271.o Philips_TDA18271_C2.o\
+		TDA18271_C2.o Philips_TDA18271_C2_Askey.o TDA18271_C2_Askey.o
+
+obj-m += dvb-usb-af903x.o 
+
+default:
+ifneq (,$(findstring 2.6.16,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.16/* ./
+endif
+ifneq (,$(findstring 2.6.17,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.17/* ./
+endif
+ifneq (,$(findstring 2.6.18,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.18/* ./
+endif
+ifneq (,$(findstring 2.6.19,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.19/* ./
+endif
+ifneq (,$(findstring 2.6.20,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.20/* ./
+endif
+ifneq (,$(findstring 2.6.21,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.21/* ./
+endif
+ifneq (,$(findstring 2.6.22,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.22/* ./
+endif
+ifneq (,$(findstring 2.6.23,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.23/* ./
+endif
+ifneq (,$(findstring 2.6.24,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.24/* ./
+endif
+ifneq (,$(findstring 2.6.25,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.25/* ./
+endif
+ifneq (,$(findstring 2.6.26,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.26/* ./
+endif
+ifneq (,$(findstring 2.6.27,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.27/* ./
+endif
+ifneq (,$(findstring 2.6.28,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.28/* ./
+endif
+ifneq (,$(findstring 2.6.29,$(CURRENT)))
+	@cp -f v4l/kernel-2.6.29/* ./
+endif
+
+	@(cp api/*.* ./; cp api/.*.o.cmd  ./; cp src/*.* ./)
+	make -C $(KDIR) SUBDIRS=$(PWD) modules
+
+
+ifneq (,$(findstring 2.4.,$(CURRENT)))
+install:
+	@install -d $(KDIR26)
+	@for i in dvb-core.o dvb-pll.o dvb-usb.o dvb-usb-af903x.o;do  if [ -e "$$i" ]; then echo -n "$$i "; install -m 644 -c $$i $(KDIR26); fi; done; echo;
+	/sbin/depmod -a ${KERNELRELEASE}
+else
+install:
+	@install -d $(KDIR26) 
+	@for i in dvb-usb-af903x.ko;do  if [ -e "$$i" ]; then echo -n "$$i "; install -m 644 -c $$i $(KDIR26); fi; done; echo;
+	/sbin/depmod -a ${KERNELRELEASE}
+	@for i in af35irtbl.bin;do  if [ -e "$$i" ]; then echo -n "$$i "; cp -rf af35irtbl.bin  /lib/firmware/; fi; done; echo;
+endif
+
+
+remove:
+	echo -e "\nRemoving old $(KDIR26)/ files:"
+	@files='dvb-usb-af903x.ko'; for i in $$files;do if [ -e $(KDIR26)/$$i ]; then echo -n "$$i "; rm $(KDIR26)/$$i; fi; done; for i in $$files;do if [ -e $(KDIR26)/$$i.gz ]; then echo -n "$$i.gz "; rm $(KDIR26)/$$i.gz; fi; done; echo;
+
+
+clean:
+	@-rm -f *~ *.o *.ko .*.o.cmd .*.ko.cmd *.mod.c *.*~ *.c *.h \
+	demux.h dmxdev.h dvb-pll.h dvb-usb-ids.h dvb-usb.h dvb_demux.h dvb_frontend.h \
+	dvb_net.h dvb_ringbuffer.h dvbdev.h modules.order Module.markers Module.symvers
+
+-include $(KDIR)/Rules.make
+
