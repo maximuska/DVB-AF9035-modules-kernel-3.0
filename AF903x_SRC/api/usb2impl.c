@@ -6,7 +6,7 @@
 #include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/kref.h>
-#include <linux/smp_lock.h>
+#include <linux/smp.h>
 #include <linux/usb.h>
 #include <asm/uaccess.h>
 #include <linux/device.h>

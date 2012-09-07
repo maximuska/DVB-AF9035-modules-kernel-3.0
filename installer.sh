@@ -6,13 +6,14 @@ echo "Please Input Your Choise:"
 read choice
 case "$choice" in
 1)
-    echo "Please wait a minute"
+    echo "Building"
     sleep 1
     make 
     if [ -f dvb-usb-af903x.o ]
     then
 	echo "make ok"
-	make install
+    echo "Installing"
+	sudo make install
 	make clean
     else
 	echo "make error"
@@ -21,7 +22,8 @@ case "$choice" in
     fi
     ;;
 2)
-    make remove
+    echo "Uninstalling"
+    sudo make remove
     ;;
 esac
 echo "Installer finished"
